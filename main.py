@@ -20,7 +20,6 @@ async def on_ready():
 async def main():
     async with bot:
         await bot.load_extension("cogs.project")
-        await bot.load_extension("cogs.coin")
         await bot.start(TOKEN)
 
 asyncio.run(main())
