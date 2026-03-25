@@ -6,12 +6,12 @@ import discord
 from discord.ext import commands
 from dotenv import load_dotenv
 
-from database.connection import close_pool, create_pool
+from api.client import close_api_session, create_api_session
 
 load_dotenv()
 
 # ── Validasi env variables sebelum bot nyala ──────────────────────────────────
-REQUIRED_ENV = ["TOKEN_BOT", "DB_HOST", "DB_NAME", "DB_USER", "DB_PASSWORD"]
+REQUIRED_ENV = ["TOKEN_BOT", "API_BASE_URL"]
 
 missing = [key for key in REQUIRED_ENV if not os.getenv(key)]
 if missing:
@@ -56,10 +56,10 @@ async def ping(interaction: discord.Interaction) -> None:
 
 async def main() -> None:
     async with bot:
-        # Koneksi ke database sebelum bot start
-        print("[⏳] Menghubungkan ke database...")
-        await create_pool()
-        print("[✅] Koneksi database berhasil!")
+        # Inisialisasi API client sebelum bot start
+        print("[⏳] Menyiapkan koneksi ke API...")
+        await create_api_session()
+        print("[✅] API client berhasil disiapkan!")
 
         # Load semua cog
         for cog in COGS:
@@ -70,8 +70,8 @@ async def main() -> None:
             await bot.start(TOKEN)
         finally:
             # Cleanup saat bot shutdown
-            await close_pool()
-            print("[👋] Bot shutdown, koneksi database ditutup.")
+            await close_api_session()
+            print("[👋] Bot shutdown, koneksi API ditutup.")
 
 
 asyncio.run(main())
